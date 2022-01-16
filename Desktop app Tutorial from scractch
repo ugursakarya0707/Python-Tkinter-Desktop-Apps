@@ -1,0 +1,109 @@
+from tkinter import *
+from tkcalendar import DateEntry
+
+
+master = Tk()
+
+canvas = Canvas(master, height=450, width=750)
+canvas.pack()
+
+frame_ust = Frame(master, bg="red")
+frame_ust.place(relx=0.1, rely=0.1, relwidth=0.75, relheight=0.1)
+
+frame_alt_sol = Frame(master, bg="red")
+frame_alt_sol.place(relx=0.1, rely=0.21, relwidth=0.23, relheight=0.5)
+
+frame_alt_sag = Frame(master, bg="red")
+frame_alt_sag.place(relx=0.35, rely=0.21, relwidth=0.5, relheight=0.5)
+
+
+hatırlatma_tipi_etiket = Label(frame_ust, bg="red", text= "Hatırlatma Tipi", font="Verdana 12 bold")
+hatırlatma_tipi_etiket.pack(padx=10, pady=10,side =LEFT)
+
+hatırlatma_tipi_opsiyon = StringVar(frame_ust)
+hatırlatma_tipi_opsiyon.set("\t")
+
+hatırlatma_tipi_acilir_menu = OptionMenu(
+    frame_ust, 
+    hatırlatma_tipi_opsiyon,
+    "Doğum gunu",
+    "ödeme",
+    "akısveris")
+
+hatırlatma_tipi_acilir_menu.pack(padx_=10,pady=10, side=LEFT)
+
+hatırlatma_tarihi_secici = DateEntry(frame_ust, width =12, background= "orange",foreground="black",borderwidth=1,locale ="de_DE")
+hatırlatma_tarihi_secici._top_cal.overrideredirect(False)
+hatırlatma_tarihi_secici.pack(padx=10, pady=10,side =RIGHT)
+
+
+hatırlatma_tarihi_etiket = Label(frame_ust, bg="red", text= "Hatırlatma Tarihi", font="Verdana 12 bold")
+hatırlatma_tarihi_etiket.pack(padx=10, pady=10,side =RIGHT)
+
+Label(frame_alt_sol, text = "Hatırlatma Yöntemi" , bg="red", font="Verdana 10 bold").pack(padx=10,pady=10,anchor=NW)
+
+var = IntVar()
+
+R1 = Radiobutton(frame_alt_sol, text="Sisteme Kaydet", variable = var, value=1,bg="red",font="Verdana 10")
+R1.pack(anchor=NW, padx=15, pady=5)
+
+R2 = Radiobutton(frame_alt_sol, text="E-posta Gönder", variable = var, value=2,bg="red",font="Verdana 10")
+R2.pack(anchor=NW, padx=15, pady=5)
+
+var1 = IntVar()
+C1 = Checkbutton(frame_alt_sol, text = "Bir Hafta Önce", variable=var1, onvalue = 1, offvalue=0,background="red", font="Verdana 10")
+C1.pack(anchor=NW, pady=5,padx=25)
+
+var2 = IntVar()
+C1 = Checkbutton(frame_alt_sol, text = "Bir gün Önce", variable=var2, onvalue = 1, offvalue=0,background="red", font="Verdana 10")
+C1.pack(anchor=NW, pady=5,padx=25)
+
+var3 = IntVar()
+C1 = Checkbutton(frame_alt_sol, text = "Aynı gün", variable=var3, onvalue = 1, offvalue=0,background="red", font="Verdana 10")
+C1.pack(anchor=NW, pady=5,padx=25)
+
+from tkinter import messagebox
+
+def gonder():
+    son_mesaj = ""
+    
+    
+    if var.get():
+        if var.get()==1:
+            son_mesaj += "bigiler kaydedildi"
+            
+            tip = hatırlatma_tipi_opsiyon.get() if hatırlatma_tipi_opsiyon.get() =='' else 'Genel'
+            tarih = hatırlatma_tarihi_secici.get()
+            mesaj = metin_alani.get("1.0","end")
+            
+            with open("hatırlatmalar.txt","w") as dosya:
+                dosya.write(
+                      '{} kategorisinde,{} tarihine ve"{}" notuyla hatırlatma'.format(
+                      tip,
+                      tarih,
+                      mesaj
+                      ))
+                dosya.close()
+            
+        elif var.get()  == 2:
+            son_mesaj += "e posta yoluyla bigiler kaydedildi"
+            
+        messagebox.showinfo("Başarılı İşlem", son_mesaj)
+    return
+
+
+Label(frame_alt_sag, text = "Hatırlatma Mesajı" , bg="red", font="Verdana 10 bold").pack(padx=10,pady=10,anchor=NW)
+
+metin_alani = Text(frame_alt_sag, heigh=9, width = 50)
+metin_alani.tag_configure('style', foreground = '#bfbfbf',font=('Verdana','7','bold'))
+metin_alani.pack()
+
+karşılama_metni = 'Mesajını buraya gir...'
+metin_alani.insert(END, karşılama_metni, 'style')
+
+gonder_butonu = Button(frame_alt_sag, text = "Gönder",command=gonder)
+gonder_butonu.pack(anchor=S)
+
+
+
+master.mainloop()
